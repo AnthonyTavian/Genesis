@@ -1,0 +1,33 @@
+import { View, Text } from 'react-native'
+
+export default function OfferPrice({ offer, styles }) {
+  if (!offer) return null
+  if (offer.type === 'product') {
+    return (
+      <View style={styles.priceContainer}>
+        <Text style={styles.originalPrice}>R$ {offer.originalPrice.toFixed(2)}</Text>
+        <Text style={styles.discountPrice}>R$ {offer.discountPrice.toFixed(2)}</Text>
+        <View style={styles.discountBadge}>
+          <Text style={styles.discountBadgeText}>-{offer.discount}%</Text>
+        </View>
+      </View>
+    )
+  }
+  if (offer.type === 'coupon') {
+    return (
+      <View style={styles.priceContainer}>
+        <Text style={styles.discountPrice}>{offer.value}% OFF</Text>
+        <View style={styles.discountBadge}>
+          <Text style={styles.discountBadgeText}>CUPOM</Text>
+        </View>
+      </View>
+    )
+  }
+  if (offer.type === 'gift') {
+    return (
+      <View style={styles.priceContainer}>
+        <Text style={styles.discountPrice}>GRÁTIS 🎁</Text>
+      </View>
+    )
+  }
+}

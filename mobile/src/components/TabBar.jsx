@@ -3,14 +3,22 @@ import { Ionicons } from '@expo/vector-icons'
 import { useRoute } from '@react-navigation/native'
 import { styles } from '../styles/ChatScreen.styles'
 
-export default function TabBar({ navigation}) {
+export default function TabBar({ navigation }) {
   const route = useRoute()
+
+  function handleNavigate(screen) {
+    if (screen === 'Chat' && navigation.canGoBack()) {
+      navigation.goBack()
+    } else if (screen === 'History') {
+      navigation.navigate('History')
+    }
+  }
 
   return (
     <View style={styles.bottomButtons}>
       <TouchableOpacity
         style={styles.tabButton}
-        onPress={() => {if (navigation.canGoBack()) { navigation.goBack() }}}
+        onPress={() => handleNavigate('Chat')}
       >
         <Ionicons
           name="pricetag-outline"
@@ -24,7 +32,7 @@ export default function TabBar({ navigation}) {
 
       <TouchableOpacity
         style={styles.tabButton}
-        onPress={() => navigation.navigate('History')}
+        onPress={() => handleNavigate('History')}
       >
         <Ionicons
           name="time-outline"

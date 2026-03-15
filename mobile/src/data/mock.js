@@ -1,4 +1,4 @@
-export const ofertas = [
+export const offers = [
   {
     id: 1,
     title: 'Arroz 5kg',
@@ -47,7 +47,7 @@ export const ofertas = [
 ]
 
 
-export const mensagens = {
+export const messages = {
   session_start: [
     'Olá! Me chamo Márcio, seu consultor de ofertas.',
     'Separei 5 ofertas exclusivas pra você hoje. Vamos lá?',

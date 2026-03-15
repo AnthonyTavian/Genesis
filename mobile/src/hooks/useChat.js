@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { uuidv7 } from 'uuidv7'
 import { startSession, getDecision } from '../services/offer.service'
 import { saveRescue } from '../database/database'
@@ -8,92 +8,93 @@ export function useChat() {
   const [session, setSession] = useState(null)
   const [offerIndex, setOfferIndex] = useState(0)
   const [currentOffer, setCurrentOffer] = useState(null)
-  const [offerDecided, setOfferDecided] = useState(false)
-  const timeoutsRef = useRef([])
+  const [isTyping, setIsTyping] = useState(false)
 
-  useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach(clearTimeout)
-    }
-  }, [])
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  async function addBotMessages(texts, delay = 800) {
+  async function sendBotMessages(texts) {
+    if (!texts || texts.length === 0) return
+    setIsTyping(true)
     for (const text of texts) {
-      setMessages(prev => [...prev, { id: uuidv7(), text, type: 'bot' }])
-      await sleep(delay)
+      await delay(800)
+      setMessages(prev => [...prev, { id: uuidv7(), type: 'bot', text }])
+    }
+    setIsTyping(false)
+  }
+
+  const startNewSession = async () => {
+    try {
+      const data = startSession()
+
+      setMessages([])
+      setSession(data)
+      setOfferIndex(0)
+      setCurrentOffer(data.currentOffer)
+
+      await sendBotMessages(data.messages)
+      await delay(500)
+
+      setMessages(prev => [...prev, {
+        id: uuidv7(),
+        type: 'offer',
+        offer: data.currentOffer,
+        offerNumber: data.currentOfferNumber,
+        total: data.totalOffers,
+        decided: false
+      }])
+    } catch (error) {
+      console.error('Erro ao iniciar sessão:', error)
     }
   }
 
-  function addUserMessage(text) {
-    setMessages(prev => [...prev, { id: uuidv7(), text, type: 'user' }])
-  }
+  const handleDecision = async (accepted) => {
+    if (isTyping) return
 
-  function addOfferCard(offer, offerNumber, total) {
-    setMessages(prev => [...prev, {
-      id: uuidv7(),
-      type: 'offer',
-      offer,
-      offerNumber,
-      total,
-      decided: false,
-      accepted: null
-    }])
-  }
+    try {
+      setMessages(prev => prev.map(msg =>
+        msg.type === 'offer' && msg.offer.id === currentOffer.id
+          ? { ...msg, decided: true, accepted }
+          : msg
+      ))
 
-  async function handleBotSequence(result) {
-    await addBotMessages(result.messages)
-    if (result.finished) {
-      setMessages(prev => [...prev, { id: uuidv7(), type: 'new_session' }])
-      return
+      const userText = accepted ? 'Quero essa oferta! ✅' : 'Não, obrigado. ❌'
+      setMessages(prev => [...prev, { id: uuidv7(), type: 'user', text: userText }])
+
+      if (accepted && session && currentOffer) {
+        saveRescue(session.sessionId, currentOffer)
+      }
+
+      const result = getDecision(offerIndex, accepted)
+
+      await sendBotMessages(result.messages)
+
+      if (result.finished) {
+        await delay(500)
+        setMessages(prev => [...prev, { id: uuidv7(), type: 'new_session' }])
+      } else {
+        setOfferIndex(prev => prev + 1)
+        setCurrentOffer(result.nextOffer)
+
+        await delay(800)
+
+        setMessages(prev => [...prev, {
+          id: uuidv7(),
+          type: 'offer',
+          offer: result.nextOffer,
+          offerNumber: result.currentOfferNumber,
+          total: result.totalOffers,
+          decided: false
+        }])
+      }
+    } catch (error) {
+      console.error('Erro ao processar decisão:', error)
     }
-    if (result.nextMessages) {
-      await addBotMessages(result.nextMessages)
-    }
-    setOfferDecided(false)
-    addOfferCard(result.offer, result.offerNumber, result.total)
-  }
-
-  function initSession() {
-    timeoutsRef.current.forEach(clearTimeout)
-    timeoutsRef.current = []
-    const result = startSession()
-    setSession(result)
-    setCurrentOffer(result.offer)
-    setOfferIndex(0)
-    setOfferDecided(false)
-    setMessages([])
-    handleBotSequence({
-      messages: result.messages,
-      nextMessages: [],
-      offer: result.offer,
-      offerNumber: result.offerNumber,
-      total: result.total
-    })
-  }
-
-  function handleDecision(accepted) {
-    if (offerDecided) return
-    setOfferDecided(true)
-    setMessages(prev => prev.map(msg =>
-      msg.type === 'offer' && msg.offer.id === currentOffer.id
-        ? { ...msg, decided: true, accepted }
-        : msg
-    ))
-    addUserMessage(accepted ? 'Quero essa oferta! ✅' : 'Não, obrigado. ❌')
-    const result = getDecision(session.sessionId, offerIndex, accepted)
-    if (accepted) saveRescue(session.sessionId, currentOffer)
-    setOfferIndex(prev => prev + 1)
-    setCurrentOffer(result.offer)
-    handleBotSequence(result)
   }
 
   return {
     messages,
-    initSession,
+    startNewSession,
     handleDecision,
+    isTyping
   }
 }

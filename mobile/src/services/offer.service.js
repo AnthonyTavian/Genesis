@@ -1,59 +1,48 @@
-import { ofertas, mensagens } from '../data/mock'
+import { offers, messages } from '../data/mock'
+
+const TOTAL_OFFERS = offers.length
 
 export function startSession() {
   return {
     sessionId: Date.now().toString(),
-    offerNumber: 1,
-    total: 5,
-    messages: mensagens.session_start,
-    offer: ofertas[0],
+    currentOfferNumber: 1,
+    totalOffers: TOTAL_OFFERS,
+    messages: messages.session_start,
+    currentOffer: offers[0],
   }
 }
 
-export function getDecision(sessionId, offerIndex, accepted) {
-  const nextIndex = offerIndex + 1
+export function getDecision(currentIndex, accepted) {
+  const nextIndex = currentIndex + 1
+  const isLast = nextIndex >= TOTAL_OFFERS
 
-  if (accepted) {
-    const messages = mensagens.offer_accept
-    if (nextIndex >= 5) {
-      return {
-        accepted: true,
-        finished: true,
-        messages: [...messages, ...mensagens.session_end],
-        offer: null
-      }
-    }
-    return {
-      accepted: true,
-      finished: false,
-      messages,
-      offerNumber: nextIndex + 1,
-      total: 5,
-      offer: ofertas[nextIndex],
-      nextMessages: nextIndex === 4 
-        ? mensagens.last_offer 
-        : [mensagens.offer_present[nextIndex - 1]]
-    }
-  }
+  const reaction = accepted 
+    ? messages.offer_accept 
+    : [messages.offer_decline[currentIndex % messages.offer_decline.length]]
 
-  if (nextIndex >= 5) {
+  if (isLast) {
+    const closing = accepted 
+      ? [...reaction, ...messages.session_end]
+      : [...messages.last_offer_decline, ...messages.session_end]
+
     return {
-      accepted: false,
+      accepted,
       finished: true,
-      messages: [...mensagens.last_offer_decline, ...mensagens.session_end],
-      offer: null
+      messages: closing,
+      nextOffer: null,
     }
   }
+
+  const introduction = nextIndex === TOTAL_OFFERS - 1
+    ? messages.last_offer
+    : [messages.offer_present[nextIndex % messages.offer_present.length]]
 
   return {
-    accepted: false,
+    accepted,
     finished: false,
-    messages: [mensagens.offer_decline[offerIndex % mensagens.offer_decline.length]],
-    offerNumber: nextIndex + 1,
-    total: 5,
-    offer: ofertas[nextIndex],
-    nextMessages: nextIndex === 4 
-        ? mensagens.last_offer 
-        : [mensagens.offer_present[nextIndex - 1]]
+    messages: [...reaction, ...introduction],
+    currentOfferNumber: nextIndex + 1,
+    totalOffers: TOTAL_OFFERS,
+    nextOffer: offers[nextIndex],
   }
 }

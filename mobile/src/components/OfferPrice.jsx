@@ -7,8 +7,8 @@ export default function OfferPrice({ offer, styles }) {
     case 'product':
       return (
         <View style={styles.priceContainer}>
-          <Text style={styles.originalPrice}>R$ {offer.originalPrice.toFixed(2)}</Text>
-          <Text style={styles.discountPrice}>R$ {offer.discountPrice.toFixed(2)}</Text>
+          <Text style={styles.originalPrice}>R$ {offer.original_price.toFixed(2)}</Text>
+          <Text style={styles.discountPrice}>R$ {offer.discount_price.toFixed(2)}</Text>
           <View style={styles.discountBadge}>
             <Text style={styles.discountBadgeText}>-{offer.discount}%</Text>
           </View>

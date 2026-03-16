@@ -1,8 +1,10 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import { styles } from '../styles/ChatScreen.styles'
 import OfferPrice from './OfferPrice'
+import { offerImages } from '../data/mock'
 
 export default function OfferCard({ item, onDecision }) {
+  const image = offerImages[item.offer.id]
   return (
     <View style={styles.offerCard}>
       <Text style={styles.offerLabel}>
@@ -11,7 +13,7 @@ export default function OfferCard({ item, onDecision }) {
 
       <View style={styles.offerContent}>
         <View style={styles.offerImageBox}>
-          <Image source={item.offer.image} style={styles.offerImage} onError={() => console.warn('Erro ao carregar imagem da oferta')} />
+          <Image source={image} style={styles.offerImage} onError={() => console.warn('Erro ao carregar imagem da oferta')} />
         </View>
 
         <View style={styles.offerInfo}>

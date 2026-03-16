@@ -11,42 +11,83 @@ Aplicativo mobile de ofertas personalizadas para supermercado, inspirado no sist
 - 5 ofertas sequenciais com imagem, preço e desconto
 - Suporte a 3 tipos de oferta: produto, cupom e brinde
 - Botões de aceitar e recusar
-- Mensagens do usuário e do bot com delay
+- Mensagens do Márcio vindas da API com delay
 
 ### Histórico de Resgates
-- Lista todas as ofertas aceitas
+- Lista todas as ofertas aceitas de todas as sessões
 - Exibe imagem, título, descrição, preço e data
 - Atualiza automaticamente ao acessar a tela
 
 ---
 
 ## 🚀 Como Rodar
+
+### API
+```bash
+cd api
+npm install
+node src/app.js
+```
+
+### Mobile
 ```bash
 cd mobile
 npm install
 npx expo start
 ```
 
-Escaneie o QR code com o app **Expo Go** no celular.
+Crie um arquivo `.env` na pasta `mobile/` com o IP da sua máquina:
+```
+EXPO_PUBLIC_API_URL=http://SEU_IP:3000
+```
+
+Escaneie o QR code com o app **Expo Go** no celular. O celular e o PC precisam estar na mesma rede Wi-Fi.
 
 ---
 
-## 🏗️ Arquitetura Mobile
+## 🏗️ Arquitetura
+
+### Mobile
 ```
 src/
-├── components/  
-├── data/        
-├── database/     
-├── hooks/        
-├── screens/      
-└── services/     
+├── components/   # Componentes reutilizáveis
+├── data/         # Mapeamento de imagens locais
+├── hooks/        # Lógica de negócio (useChat, useHistory)
+├── screens/      # Telas do app
+├── services/     # Chamadas à API
+└── styles/       # Styles separados por componente/tela
 ```
+
+### API
+```
+src/
+├── db/           # Conexão e migrations do SQLite
+├── routes/       # Endpoints
+└── services/     # Lógica de negócio
+```
+
+---
+
+## 🔌 Endpoints da API
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/session/start` | Inicia sessão e retorna primeira oferta |
+| GET | `/offers/current` | Retorna oferta atual da sessão |
+| POST | `/offers/decision` | Registra decisão e avança para próxima oferta |
+| GET | `/rescues/history` | Lista todas as ofertas aceitas |
 
 ---
 
 ## 🛠️ Tecnologias
 
+### Mobile
 - React Native + Expo
-- expo-sqlite
 - react-navigation
 - uuidv7
+
+### API
+- Node.js + Express
+- better-sqlite3
+- uuidv7
+- dotenv

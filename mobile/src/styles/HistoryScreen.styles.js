@@ -78,6 +78,7 @@ export const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
+    justifyContent: 'center',
   },
   badge: {
     backgroundColor: '#EAFAF1',
@@ -95,12 +96,13 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     flex: 1,
+    marginTop: 20,
+    marginBottom: 5
   },
   description: {
     color: '#666',
     fontSize: 13,
     lineHeight: 18,
-    marginBottom: 8,
   },
   date: {
     color: '#aaa',

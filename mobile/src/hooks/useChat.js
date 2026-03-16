@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { uuidv7 } from 'uuidv7'
-import { startSession, getDecision } from '../services/offer.service'
-import { saveRescue } from '../database/database'
+import { startSession } from '../services/session.service'
+import { getDecision } from '../services/offer.service'
 
 export function useChat() {
   const [messages, setMessages] = useState([])
@@ -24,7 +24,7 @@ export function useChat() {
 
   const startNewSession = async () => {
     try {
-      const data = startSession()
+      const data = await startSession()
 
       setMessages([])
       setSession(data)
@@ -60,11 +60,7 @@ export function useChat() {
       const userText = accepted ? 'Quero essa oferta! ✅' : 'Não, obrigado. ❌'
       setMessages(prev => [...prev, { id: uuidv7(), type: 'user', text: userText }])
 
-      if (accepted && session && currentOffer) {
-        saveRescue(session.sessionId, currentOffer)
-      }
-
-      const result = getDecision(offerIndex, accepted)
+      const result = await getDecision(session.sessionId, offerIndex, accepted)
 
       await sendBotMessages(result.messages)
 
@@ -73,16 +69,20 @@ export function useChat() {
         setMessages(prev => [...prev, { id: uuidv7(), type: 'new_session' }])
       } else {
         setOfferIndex(prev => prev + 1)
-        setCurrentOffer(result.nextOffer)
+        setCurrentOffer(result.offer)
+
+        if (result.nextMessages) {
+          await sendBotMessages(result.nextMessages)  
+        }
 
         await delay(800)
 
         setMessages(prev => [...prev, {
           id: uuidv7(),
           type: 'offer',
-          offer: result.nextOffer,
-          offerNumber: result.currentOfferNumber,
-          total: result.totalOffers,
+          offer: result.offer,
+          offerNumber: result.offerNumber,
+          total: result.total,
           decided: false
         }])
       }

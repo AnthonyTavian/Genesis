@@ -1,10 +1,10 @@
 import { View, Text, Image } from 'react-native'
 import { styles } from '../styles/HistoryScreen.styles'
-import { offers } from '../data/mock'
+import { offerImages } from '../data/mock'
 import OfferPrice from './OfferPrice'
 
 export default function HistoryCard({ item, formatDate }) {
-  const offer = offers.find(o => o.id === item.offer_id)
+  const image = offerImages[item.offer_id]
 
   return (
     <View style={styles.card}>
@@ -15,16 +15,16 @@ export default function HistoryCard({ item, formatDate }) {
       </View>
 
       <View style={styles.cardContent}>
-        {offer && (
+        {image && (
           <View style={styles.cardImageBox}>
-            <Image source={offer.image} style={styles.cardImage} />
+            <Image source={image} style={styles.cardImage} />
           </View>
         )}
 
         <View style={styles.cardInfo}>
           <Text style={styles.title}>{item.offer_title}</Text>
           <Text style={styles.description}>{item.offer_description}</Text>
-          {offer && <OfferPrice offer={offer} styles={styles} />}
+          {item && <OfferPrice offer={item} styles={styles} />}
           <Text style={styles.date}>{formatDate(item.created_at)}</Text>
         </View>
       </View>

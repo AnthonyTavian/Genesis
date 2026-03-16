@@ -1,48 +1,27 @@
-import { offers, messages } from '../data/mock'
+const API_URL = process.env.EXPO_PUBLIC_API_URL
 
-const TOTAL_OFFERS = offers.length
+export async function getCurrentOffer(sessionId) {
+  const response = await fetch(`${API_URL}/offers/current?sessionId=${sessionId}`, {
+    method: 'GET',
+  })
 
-export function startSession() {
-  return {
-    sessionId: Date.now().toString(),
-    currentOfferNumber: 1,
-    totalOffers: TOTAL_OFFERS,
-    messages: messages.session_start,
-    currentOffer: offers[0],
+  if (!response.ok) {
+    throw new Error('Erro ao buscar oferta atual')
   }
+
+  return await response.json()
 }
 
-export function getDecision(currentIndex, accepted) {
-  const nextIndex = currentIndex + 1
-  const isLast = nextIndex >= TOTAL_OFFERS
+export async function getDecision(sessionId, offerIndex, accepted) {
+  const response = await fetch(`${API_URL}/offers/decision`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId, accepted })
+  })
 
-  const reaction = accepted 
-    ? messages.offer_accept 
-    : [messages.offer_decline[currentIndex % messages.offer_decline.length]]
-
-  if (isLast) {
-    const closing = accepted 
-      ? [...reaction, ...messages.session_end]
-      : [...messages.last_offer_decline, ...messages.session_end]
-
-    return {
-      accepted,
-      finished: true,
-      messages: closing,
-      nextOffer: null,
-    }
+  if (!response.ok) {
+    throw new Error('Erro ao processar decisão')
   }
 
-  const introduction = nextIndex === TOTAL_OFFERS - 1
-    ? messages.last_offer
-    : [messages.offer_present[nextIndex % messages.offer_present.length]]
-
-  return {
-    accepted,
-    finished: false,
-    messages: [...reaction, ...introduction],
-    currentOfferNumber: nextIndex + 1,
-    totalOffers: TOTAL_OFFERS,
-    nextOffer: offers[nextIndex],
-  }
+  return await response.json()
 }

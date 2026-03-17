@@ -49,7 +49,6 @@ export function useChat() {
       await sendBotMessages(data.messages)
       await delay(500)
 
-      timer.startTimer()
       setMessages(prev => [...prev, {
         id: uuidv7(),
         type: 'offer',
@@ -59,13 +58,16 @@ export function useChat() {
         decided: false,
         expired: false,
       }])
+      timer.startTimer()
     } catch (error) {
       console.error('Erro ao iniciar sessão:', error)
     }
   }
 
-  const handleDecision = async (accepted, expired = false) => {
+ const handleDecision = async (accepted, expired = false) => {
     if (isTyping) return
+
+    timer.resetTimer()
 
     try {
       const offer = currentOfferRef.current
@@ -105,7 +107,6 @@ export function useChat() {
 
         await delay(800)
 
-        timer.startTimer()
         setMessages(prev => [...prev, {
           id: uuidv7(),
           type: 'offer',
@@ -115,6 +116,8 @@ export function useChat() {
           decided: false,
           expired: false,
         }])
+
+        timer.startTimer()
       }
     } catch (error) {
       console.error('Erro ao processar decisão:', error)

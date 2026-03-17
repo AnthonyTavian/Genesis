@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, StatusBar } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { styles } from '../styles/ChatScreen.styles'
 import { useChat } from '../hooks/useChat'
@@ -57,6 +57,7 @@ export default function ChatScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <StatusBar backgroundColor="#1B5E20" barStyle="light-content" />
       <Header title="GENESIS" subtitle="Ofertas exclusivas para você" onProfilePress={() => {}} />
       <View style={styles.content}>
         <FlatList

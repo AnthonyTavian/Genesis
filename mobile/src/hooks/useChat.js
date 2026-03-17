@@ -126,7 +126,6 @@ export function useChat() {
   })
 
   useEffect(() => {
-    console.log('timer.timeLeft:', timer.timeLeft, 'isTyping:', isTyping, 'currentOffer:', currentOfferRef.current?.id)
     if (timer.timeLeft === 0 && currentOfferRef.current && !isTyping) {
       setIsExpired(true)
       handleDecisionRef.current(false, true)

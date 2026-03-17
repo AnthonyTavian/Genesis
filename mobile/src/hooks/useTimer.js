@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-export function useTimer(durationSeconds = 5) {
+export function useTimer(durationSeconds = 5*60) {
   const [timeLeft, setTimeLeft] = useState(durationSeconds)
   const [isActive, setIsActive] = useState(false)
   const intervalRef = useRef(null)

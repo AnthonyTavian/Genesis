@@ -30,13 +30,62 @@ export const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // Lista
+  // List
   list: {
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 12,
   },
-
+  // Resume Card, Searching
+  historyHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  statsCard: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#D5F5E3',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  statsLabel: {
+    color: '#1B5E20',
+    fontSize: 11,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    opacity: 0.7,
+  },
+  statsValue: {
+    color: '#1B5E20',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginVertical: 4,
+  },
+  statsSub: {
+    color: '#666',
+    fontSize: 12,
+  },
+  searchBox: {
+    marginBottom: 8,
+  },
+  searchInput: {
+    backgroundColor: '#fff',
+    color: '#1a1a1a',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D5F5E3',
+    fontSize: 14,
+  },
   // Card
   card: {
     backgroundColor: '#fff',

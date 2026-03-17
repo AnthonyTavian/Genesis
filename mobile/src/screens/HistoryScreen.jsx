@@ -15,7 +15,7 @@ export default function HistoryScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title="GENESIS" subtitle="Histórico de resgates" onProfilePress={() => {}} />
       <View style={styles.content}>
         <FlatList

@@ -1,10 +1,9 @@
-import { StyleSheet, StatusBar } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1B5E20',
-    paddingTop: StatusBar.currentHeight,
   },
   content: {
     flex: 1,
@@ -62,6 +61,26 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  typingBubble: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    padding: 12,
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  typingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#1B5E20',
+  },
 
   // Mensagem do usuário
   userRow: {
@@ -102,9 +121,22 @@ export const styles = StyleSheet.create({
     color: '#1B5E20',
     fontSize: 11,
     letterSpacing: 2,
-    marginBottom: 12,
     textTransform: 'uppercase',
     fontWeight: 'bold',
+  },
+  offerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  timerText: {
+    color: '#E65100',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  timerTextUrgent: {
+    color: '#B71C1C',
   },
   offerContent: {
     flexDirection: 'row',
@@ -205,6 +237,49 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  expiredButton: {
+    backgroundColor: '#9E9E9E',
+    padding: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  expiredButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  expiredStamp: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  expiredStampText: {
+    color: '#ff4444',
+    fontWeight: 'bold',
+    fontSize: 14,
+    letterSpacing: 2,
+    borderWidth: 2,
+    borderColor: '#ff4444',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  expiredOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
   },
 
   // Botões finais

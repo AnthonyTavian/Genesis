@@ -28,6 +28,7 @@ cd api
 npm install
 node src/app.js
 ```
+Crie um arquivo `.env` na pasta `api/` com PORT=3000
 
 ### Mobile
 ```bash
@@ -39,6 +40,10 @@ npx expo start
 Crie um arquivo `.env` na pasta `mobile/` com o IP da sua máquina:
 ```
 EXPO_PUBLIC_API_URL=http://SEU_IP:3000
+
+Se for Android Studio
+
+EXPO_PUBLIC_API_URL=http://10.0.2.2:3000
 ```
 
 Escaneie o QR code com o app **Expo Go** no celular. O celular e o PC precisam estar na mesma rede Wi-Fi.

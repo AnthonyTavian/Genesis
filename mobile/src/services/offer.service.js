@@ -12,7 +12,7 @@ export async function getCurrentOffer(sessionId) {
   return await response.json()
 }
 
-export async function getDecision(sessionId, offerIndex, accepted) {
+export async function getDecision(sessionId, accepted) {
   const response = await fetch(`${API_URL}/offers/decision`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

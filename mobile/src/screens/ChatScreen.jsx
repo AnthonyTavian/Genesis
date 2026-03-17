@@ -6,12 +6,12 @@ import { useChat } from '../hooks/useChat'
 import BotMessage from '../components/BotMessage'
 import UserMessage from '../components/UserMessage'
 import OfferCard from '../components/OfferCard'
-import NewSessionButton from '../components/NewSessionButton'
 import TabBar from '../components/TabBar'
 import Header from '../components/Header'
+import TypingIndicator from '../components/TypingIndicator'
 
 export default function ChatScreen({ navigation }) {
-  const { messages, startNewSession, handleDecision } = useChat()
+  const { messages, startNewSession, handleDecision, timer, isFinished, wasAccepted, isTyping, isExpired } = useChat()
   const initialized = useRef(false)
   const insets = useSafeAreaInsets()
   const flatListRef = useRef(null)
@@ -24,15 +24,21 @@ export default function ChatScreen({ navigation }) {
   }, [])
 
   useEffect(() => {
-    if (messages.length > 0) {
-      
-      const timer = setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+    const scrollTimer = setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true })
+    }, 100)
+    return () => clearTimeout(scrollTimer)
+  }, [messages, isTyping])
 
-      return () => clearTimeout(timer); 
+  useEffect(() => {
+    if (isFinished) {
+      navigation.replace('End', { accepted: wasAccepted })
     }
-  }, [messages]);
+  }, [isFinished])
+
+  const allMessages = isTyping
+    ? [...messages, { id: 'typing', type: 'typing' }]
+    : messages
 
   function renderMessage({ item }) {
     switch (item.type) {
@@ -41,22 +47,22 @@ export default function ChatScreen({ navigation }) {
       case 'user':
         return <UserMessage item={item} />
       case 'offer':
-        return <OfferCard item={item} onDecision={handleDecision} />
-      case 'new_session':
-        return <NewSessionButton onPress={startNewSession} />
+        return <OfferCard item={item} onDecision={handleDecision} timer={timer} isExpired={isExpired} />
+      case 'typing':
+        return <TypingIndicator />
       default:
         return null
     }
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <Header title="GENESIS" subtitle="Ofertas exclusivas para você" onProfilePress={() => {}} />
       <View style={styles.content}>
         <FlatList
           ref={flatListRef}
-          data={messages}
-          keyExtractor={item => item.id.toString()} 
+          data={allMessages}
+          keyExtractor={item => item.id.toString()}
           renderItem={renderMessage}
           ListFooterComponent={<View style={{ height: 16 }} />}
           style={styles.chatList}

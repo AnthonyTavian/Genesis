@@ -48,13 +48,18 @@ function processDecision(sessionId, accepted) {
   if (session.finished) return { finished: true, message: 'Sessão encerrada' }
 
   if (accepted) {
-    const offer = db.prepare(`
-      SELECT id FROM offers LIMIT 1 OFFSET ?
-    `).get(session.current_offer_index)
+    const offer = db.prepare(`SELECT id FROM offers LIMIT 1 OFFSET ?`).get(session.current_offer_index)
+    db.prepare(`INSERT INTO rescues (session_id, offer_id) VALUES (?, ?)`).run(sessionId, offer.id)
 
-    db.prepare(`
-      INSERT INTO rescues (session_id, offer_id) VALUES (?, ?)
-    `).run(sessionId, offer.id)
+    
+    db.prepare(`UPDATE sessions SET finished = 1 WHERE id = ?`).run(sessionId)
+
+    return {
+      accepted: true,
+      finished: true,
+      messages: [...getMessages('offer_accept'), ...getMessages('session_end')],
+      offer: null
+    }
   }
 
   const nextIndex = session.current_offer_index + 1
